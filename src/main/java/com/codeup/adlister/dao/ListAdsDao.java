@@ -15,6 +15,18 @@ public class ListAdsDao implements Ads {
         return ads;
     }
 
+    @Override
+    public Ad findById(long id) {
+        if (ads == null) {
+            ads = generateAds();
+        }
+        return ads.stream()
+                .filter(ad -> ad.getId() == id)
+                .findFirst()
+                .orElse(null);
+    }
+
+
     public Long insert(Ad ad) {
         // make sure we have ads
         if (ads == null) {

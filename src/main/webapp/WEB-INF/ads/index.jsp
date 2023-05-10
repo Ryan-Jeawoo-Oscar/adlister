@@ -14,7 +14,7 @@
 
     <c:forEach var="ad" items="${ads}">
         <div class="col-md-6">
-            <h2>${ad.title}</h2>
+            <h2><a href="${pageContext.request.contextPath}/ads/details?id=${ad.id}">${ad.title}</h2>
             <p>${ad.description}</p>
         </div>
     </c:forEach>
