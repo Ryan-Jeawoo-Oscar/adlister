@@ -37,6 +37,15 @@ public class ListAdsDao implements Ads {
                 .filter(ad -> ad.getTitle().toLowerCase().contains(query) || ad.getDescription().toLowerCase().contains(query))
                 .collect(Collectors.toList());
     }
+    @Override
+    public List<Ad> getUserAds(long userId) {
+        if (ads == null) {
+            ads = generateAds();
+        }
+        return ads.stream()
+                .filter(ad -> ad.getUserId() == userId)
+                .collect(Collectors.toList());
+    }
 
     public Long insert(Ad ad) {
         // make sure we have ads
