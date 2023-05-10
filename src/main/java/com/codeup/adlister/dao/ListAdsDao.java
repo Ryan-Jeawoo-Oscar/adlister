@@ -4,6 +4,8 @@ import com.codeup.adlister.models.Ad;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+
 
 public class ListAdsDao implements Ads {
     private List<Ad> ads;
@@ -25,7 +27,16 @@ public class ListAdsDao implements Ads {
                 .findFirst()
                 .orElse(null);
     }
-
+    @Override
+    public List<Ad> search(String searchQuery) {
+        if (ads == null) {
+            ads = generateAds();
+        }
+        String query = searchQuery.toLowerCase();
+        return ads.stream()
+                .filter(ad -> ad.getTitle().toLowerCase().contains(query) || ad.getDescription().toLowerCase().contains(query))
+                .collect(Collectors.toList());
+    }
 
     public Long insert(Ad ad) {
         // make sure we have ads
