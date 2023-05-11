@@ -98,4 +98,31 @@ public class MySQLAdsDao extends BaseDao implements Ads {
             throw new RuntimeException("Error retrieving user ads.", e);
         }
     }
+    @Override
+    public void update(Ad ad) {
+        try {
+            String updateQuery = "UPDATE ads SET user_id=?, title=?, description=? WHERE id=?";
+            PreparedStatement stmt = connection.prepareStatement(updateQuery);
+            stmt.setLong(1, ad.getUserId());
+            stmt.setString(2, ad.getTitle());
+            stmt.setString(3, ad.getDescription());
+            stmt.setLong(4, ad.getId());
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException("Error updating the ad.", e);
+        }
+    }
+
+    @Override
+    public void delete(long id) {
+        try {
+            String deleteQuery = "DELETE FROM ads WHERE id=?";
+            PreparedStatement stmt = connection.prepareStatement(deleteQuery);
+            stmt.setLong(1, id);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException("Error deleting the ad.", e);
+        }
+    }
+
 }

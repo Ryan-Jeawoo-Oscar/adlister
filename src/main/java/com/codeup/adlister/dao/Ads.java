@@ -15,4 +15,6 @@ public interface Ads {
     List<Ad> search(String searchQuery);
 
     List<Ad> getUserAds(long userId);
+    void update(Ad ad);
+    void delete(long id);
 }

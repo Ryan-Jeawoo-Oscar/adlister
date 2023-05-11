@@ -46,6 +46,21 @@ public class ListAdsDao implements Ads {
                 .filter(ad -> ad.getUserId() == userId)
                 .collect(Collectors.toList());
     }
+    @Override
+    public void update(Ad ad) {
+        for (int i = 0; i < ads.size(); i++) {
+            if (ads.get(i).getId() == ad.getId()) {
+                ads.set(i, ad);
+                break;
+            }
+        }
+    }
+
+    @Override
+    public void delete(long id) {
+        ads.removeIf(ad -> ad.getId() == id);
+    }
+
 
     public Long insert(Ad ad) {
         // make sure we have ads
