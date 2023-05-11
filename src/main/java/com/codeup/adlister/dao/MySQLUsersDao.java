@@ -38,6 +38,20 @@ public class MySQLUsersDao extends BaseDao implements Users {
             throw new RuntimeException("Error creating new user", e);
         }
     }
+    @Override
+    public void update(User user) {
+        try {
+            String updateQuery = "UPDATE users SET username = ?, email = ? WHERE id = ?";
+            PreparedStatement stmt = connection.prepareStatement(updateQuery);
+            stmt.setString(1, user.getUsername());
+            stmt.setString(2, user.getEmail());
+            stmt.setLong(3, user.getId());
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException("Error updating user.", e);
+        }
+    }
+
 
     private User extractUser(ResultSet rs) throws SQLException {
         if (! rs.next()) {
