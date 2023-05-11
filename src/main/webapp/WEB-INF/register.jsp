@@ -29,5 +29,11 @@
             <input type="submit" class="btn btn-primary btn-block">
         </form>
     </div>
+    <script>
+        var errorMessage = "${param.error}";
+        if (errorMessage && errorMessage !== "") {
+            alert(errorMessage);
+        }
+    </script>
 </body>
 </html>
