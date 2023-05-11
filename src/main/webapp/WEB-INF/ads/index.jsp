@@ -15,7 +15,7 @@
     <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
 </form>
 
-<div class="container">
+<n class="container">
     <h1>Here Are all the ads!</h1>
 
     <c:forEach var="ad" items="${ads}">
@@ -41,7 +41,12 @@
             </form>
         </div>
     </c:forEach>
+    </n>
+    <div class="text-center">
+        <a class="btn btn-primary" href="${pageContext.request.contextPath}/ads/create">Create New Ad</a>
+    </div>
 </div>
+
 <script>
     $(document).ready(function() {
         $('.update-btn').on('click', function() {
