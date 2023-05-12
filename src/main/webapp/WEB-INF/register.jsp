@@ -28,12 +28,9 @@
             </div>
             <input type="submit" class="btn btn-primary btn-block">
         </form>
+        <c:if test="${not empty error}">
+            <p class="error-message" style="color: red">${error}</p>
+        </c:if>
     </div>
-    <script>
-        var errorMessage = "${param.error}";
-        if (errorMessage && errorMessage !== "") {
-            alert(errorMessage);
-        }
-    </script>
 </body>
 </html>

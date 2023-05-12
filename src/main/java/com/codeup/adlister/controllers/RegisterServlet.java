@@ -21,7 +21,7 @@ public class RegisterServlet extends HttpServlet {
         request.getRequestDispatcher("/WEB-INF/register.jsp").forward(request, response);
     }
 
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException{
         String username = request.getParameter("username");
         String email = request.getParameter("email");
         String password = request.getParameter("password");
@@ -43,12 +43,14 @@ public class RegisterServlet extends HttpServlet {
         }
 
         // validate input
-        if (!Validator.isValidUsername(username) ||
-                !Validator.isValidEmail(email) ||
-                !Validator.isValidPassword(password) ||
-                !password.equals(passwordConfirmation)) {
+        if (!errorMessages.isEmpty()) {
             String errorMessage = String.join("\\n", errorMessages);
-            response.sendRedirect("/register?error=" + errorMessage);
+            request.setAttribute("username", username);
+            request.setAttribute("email", email);
+            request.setAttribute("password", password);
+            request.setAttribute("confirm_password", passwordConfirmation);
+            request.setAttribute("error", errorMessage);
+            request.getRequestDispatcher("/WEB-INF/register.jsp").forward(request, response);
             return;
         }
 
