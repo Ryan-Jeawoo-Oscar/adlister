@@ -35,10 +35,10 @@ public class CreateAdServlet extends HttpServlet {
         List<String> errorMessages = new ArrayList<>();
 
         if(!Validator.isValidTitle(title)) {
-            errorMessages.add("Invalid title, the Ad Title must between 2 to 15 character");
+            errorMessages.add("Invalid title, the Ad Title must between 2 to 30 characters");
         }
         if(!Validator.isValidDescription(description)) {
-            errorMessages.add("Invalid title, the description must between 5 to 50 character");
+            errorMessages.add("Invalid title, the description must between 5 to 500 characters");
         }
         if (!errorMessages.isEmpty()) {
             String errorMessage = String.join("\\n", errorMessages);
