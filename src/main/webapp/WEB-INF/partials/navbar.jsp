@@ -12,6 +12,7 @@
                     <li><a href="/register">Register</a></li>
                 </c:when>
                 <c:otherwise>
+                    <li><a href="/profile">${sessionScope.user.username}</a></li>
                     <li><a href="/logout">Logout</a></li>
                 </c:otherwise>
             </c:choose>

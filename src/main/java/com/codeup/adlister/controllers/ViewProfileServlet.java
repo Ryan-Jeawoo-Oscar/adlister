@@ -1,6 +1,8 @@
 package com.codeup.adlister.controllers;
 
+import com.codeup.adlister.dao.CategoriesDao;
 import com.codeup.adlister.dao.DaoFactory;
+import com.codeup.adlister.models.Category;
 import com.codeup.adlister.models.User;
 import com.codeup.adlister.models.Ad;
 
@@ -22,6 +24,11 @@ public class ViewProfileServlet extends HttpServlet {
         User user = (User) request.getSession().getAttribute("user");
         List<Ad> userAds = DaoFactory.getAdsDao().getUserAds(user.getId());
         request.setAttribute("userAds", userAds);
+
+        CategoriesDao categoriesDao = DaoFactory.getCategoriesDao();
+        List<Category> allCategories = categoriesDao.getAllCategories();
+        request.setAttribute("allCategories", allCategories);
+
         request.getRequestDispatcher("/WEB-INF/profile.jsp").forward(request, response);
     }
 }

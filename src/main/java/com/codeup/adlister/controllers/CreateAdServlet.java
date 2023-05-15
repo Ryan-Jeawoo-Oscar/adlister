@@ -26,9 +26,8 @@ public class CreateAdServlet extends HttpServlet {
             return;
         }
         CategoriesDao categoriesDao = DaoFactory.getCategoriesDao();
-        List<Category> categories = categoriesDao.getAllCategories();
-
-        request.setAttribute("categories", categories);
+        List<Category> allCategories = categoriesDao.getAllCategories();
+        request.setAttribute("allCategories", allCategories);
 
         request.getRequestDispatcher("/WEB-INF/ads/create.jsp").forward(request, response);
 
@@ -38,8 +37,6 @@ public class CreateAdServlet extends HttpServlet {
         User loggedInUser = (User) request.getSession().getAttribute("user");
         String title = request.getParameter("title");
         String description = request.getParameter("description");
-        String categoriesStr = request.getParameter("categories");
-        List<String> categoriesNames = Arrays.asList(categoriesStr.split("\\s*,\\s*"));
 
         List<String> errorMessages = new ArrayList<>();
 
@@ -57,11 +54,11 @@ public class CreateAdServlet extends HttpServlet {
             request.getRequestDispatcher("/WEB-INF/ads/create.jsp").forward(request, response);
             return;
         }
-        String[] selectedCategoryNames = request.getParameterValues("categories");
+        String[] selectedCategoryIds = request.getParameterValues("categories");
         List<Category> categories = new ArrayList<>();
         CategoriesDao categoriesDao = DaoFactory.getCategoriesDao();
-        for (String categoryId : selectedCategoryNames) {
-            Category category = categoriesDao.findByName(categoryId);
+        for (String categoryId : selectedCategoryIds) {
+            Category category = categoriesDao.findById(Long.parseLong(categoryId));
             if (category != null) {
                 categories.add(category);
             }
@@ -76,7 +73,7 @@ public class CreateAdServlet extends HttpServlet {
 
         Long adId = DaoFactory.getAdsDao().insert(ad);
         DaoFactory.getCategoriesDao().insertCategoriesForAd(adId, categories);
-        response.sendRedirect("/ads");
+        response.sendRedirect("/profile");
     }
 
 }

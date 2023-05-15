@@ -12,7 +12,7 @@ public class DeleteAdServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         long id = Long.parseLong(request.getParameter("id"));
         DaoFactory.getAdsDao().delete(id);
-        response.sendRedirect("/ads");
+        response.sendRedirect("/profile");
     }
 }
 

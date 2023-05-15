@@ -69,17 +69,27 @@ public class MySQLCategoriesDao extends BaseDao implements CategoriesDao {
     @Override
     public void insertCategoriesForAd(long adId, List<Category> categories) {
         String insertQuery = "INSERT INTO ad_categories(ad_id, category_id) VALUES (?, ?)";
+        String checkQuery = "SELECT * FROM ad_categories WHERE ad_id = ? AND category_id = ?";
         try {
             PreparedStatement stmt = connection.prepareStatement(insertQuery);
+            PreparedStatement checkStmt = connection.prepareStatement(checkQuery);
             for (Category category : categories) {
-                stmt.setLong(1, adId);
-                stmt.setLong(2, category.getId());
-                stmt.executeUpdate();
+                // Check if the combination of ad_id and category_id already exists
+                checkStmt.setLong(1, adId);
+                checkStmt.setLong(2, category.getId());
+                ResultSet rs = checkStmt.executeQuery();
+                if (!rs.next()) {
+                    // If the combination does not exist, insert the new record
+                    stmt.setLong(1, adId);
+                    stmt.setLong(2, category.getId());
+                    stmt.executeUpdate();
+                }
             }
         } catch (SQLException e) {
             throw new RuntimeException("Error adding categories for the ad.", e);
         }
     }
+
     @Override
     public void updateCategoriesForAd(long adId, List<Category> categories) {
         try {

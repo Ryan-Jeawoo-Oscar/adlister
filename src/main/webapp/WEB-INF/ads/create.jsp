@@ -1,3 +1,5 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
@@ -18,10 +20,19 @@
                 <textarea id="description" name="description" class="form-control" type="text">${not empty description ? description : ''}</textarea>
             </div>
             <div class="form-group">
-                <label for="categories">Categories</label>
-                <input id="categories" name="categories" class="form-control" type="text" value="<%= request.getAttribute("categories") %>">
-                <small class="form-text text-muted">Separate categories with commas (e.g., Category1, Category2)</small>
+                <label>Categories</label>
+                <div class="categories-checkboxes">
+                    <c:forEach var="category" items="${allCategories}">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="categories" id="category${category.id}" value="${category.id}">
+                            <label class="form-check-label" for="category${category.id}">
+                                    ${category.name}
+                            </label>
+                        </div>
+                    </c:forEach>
+                </div>
             </div>
+
             <input type="submit" class="btn btn-block btn-primary">
         </form>
         <c:if test="${not empty error}">
