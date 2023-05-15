@@ -1,11 +1,14 @@
 package com.codeup.adlister.dao;
 
 import com.codeup.adlister.models.Ad;
+import com.codeup.adlister.models.Category;
 import com.mysql.cj.jdbc.Driver;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Arrays;
+
 
 public class MySQLAdsDao extends BaseDao implements Ads {
     public MySQLAdsDao(Config config) {
@@ -35,20 +38,52 @@ public class MySQLAdsDao extends BaseDao implements Ads {
             stmt.executeUpdate();
             ResultSet rs = stmt.getGeneratedKeys();
             rs.next();
-            return rs.getLong(1);
+            long adId = rs.getLong(1);
+
+            // Associate categories with the newly created ad
+            for (Category category : ad.getCategories()) {
+                String associateCategoryQuery = "INSERT INTO ad_categories(ad_id, category_id) VALUES (?, ?)";
+                PreparedStatement associateStmt = connection.prepareStatement(associateCategoryQuery);
+                associateStmt.setLong(1, adId);
+                associateStmt.setLong(2, category.getId());
+                associateStmt.executeUpdate();
+            }
+
+            return adId;
         } catch (SQLException e) {
             throw new RuntimeException("Error creating a new ad.", e);
         }
     }
 
     private Ad extractAd(ResultSet rs) throws SQLException {
-        return new Ad(
-            rs.getLong("id"),
-            rs.getLong("user_id"),
-            rs.getString("title"),
-            rs.getString("description")
-        );
+        long id = rs.getLong("id");
+        long userId = rs.getLong("user_id");
+        String title = rs.getString("title");
+        String description = rs.getString("description");
+        List<Category> categories = getCategoriesForAd(id);
+        return new Ad(id, userId, title, description, categories);
     }
+    private List<Category> getCategoriesForAd(long adId) {
+        String query = "SELECT c.id, c.name FROM categories c JOIN ad_categories ac ON c.id = ac.category_id WHERE ac.ad_id = ?";
+        List<Category> categories = new ArrayList<>();
+
+        try {
+            PreparedStatement stmt = connection.prepareStatement(query);
+            stmt.setLong(1, adId);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                long categoryId = rs.getLong("id");
+                String categoryName = rs.getString("name");
+                categories.add(new Category(categoryId, categoryName));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error retrieving categories for ad.", e);
+        }
+
+        return categories;
+    }
+
 
     private List<Ad> createAdsFromResults(ResultSet rs) throws SQLException {
         List<Ad> ads = new ArrayList<>();
@@ -124,5 +159,18 @@ public class MySQLAdsDao extends BaseDao implements Ads {
             throw new RuntimeException("Error deleting the ad.", e);
         }
     }
-
+    @Override
+    public List<Ad> getByCategory(Category category) {
+        String query = "SELECT ads.* FROM ads " +
+                "JOIN ad_categories ON ads.id = ad_categories.ad_id " +
+                "WHERE ad_categories.category_id = ?";
+        try {
+            PreparedStatement stmt = connection.prepareStatement(query);
+            stmt.setLong(1, category.getId());
+            ResultSet rs = stmt.executeQuery();
+            return createAdsFromResults(rs);
+        } catch (SQLException e) {
+            throw new RuntimeException("Error retrieving ads by category", e);
+        }
+    }
 }

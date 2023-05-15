@@ -1,4 +1,5 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
@@ -22,6 +23,8 @@
         <div class="col-md-6">
             <h2><a href="${pageContext.request.contextPath}/ads/details?id=${ad.id}">${ad.title}</a></h2>
             <p>${ad.description}</p>
+            <p>Categories: <c:forEach var="category" items="${ad.categories}">${category.name}<c:if test="${!categoryStatus.last}">, </c:if></c:forEach></p>
+
 
             <button class="update-btn">Update</button>
             <form class="update-form" action="/ads/update" method="POST" style="display: none">
@@ -31,6 +34,13 @@
                 <br/>
                 <label for="description">Description:</label>
                 <textarea id="description" name="description">${ad.description}</textarea>
+                <br/>
+                <label for="categories">Categories:</label>
+                <select id="categories" name="categories" multiple>
+                    <c:forEach var="category" items="${allCategories}">
+                        <option value="${category.id}" <c:if test="${fn:contains(ad.categories, category)}">selected</c:if>>${category.name}</option>
+                    </c:forEach>
+                </select>
                 <br/>
                 <input type="submit" value="Confirm" />
             </form>

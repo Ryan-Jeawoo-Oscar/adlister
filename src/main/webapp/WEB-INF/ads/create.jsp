@@ -17,6 +17,11 @@
                 <label for="description">Description</label>
                 <textarea id="description" name="description" class="form-control" type="text">${not empty description ? description : ''}</textarea>
             </div>
+            <div class="form-group">
+                <label for="categories">Categories</label>
+                <input id="categories" name="categories" class="form-control" type="text" value="<%= request.getAttribute("categories") %>">
+                <small class="form-text text-muted">Separate categories with commas (e.g., Category1, Category2)</small>
+            </div>
             <input type="submit" class="btn btn-block btn-primary">
         </form>
         <c:if test="${not empty error}">
