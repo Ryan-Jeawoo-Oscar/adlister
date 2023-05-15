@@ -22,6 +22,8 @@ import java.util.List;
 public class CreateAdServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         if(request.getSession().getAttribute("user") == null) {
+            // Store the requested URL in the session
+            request.getSession().setAttribute("redirectAfterLogin", request.getRequestURI());
             response.sendRedirect("/login");
             return;
         }
