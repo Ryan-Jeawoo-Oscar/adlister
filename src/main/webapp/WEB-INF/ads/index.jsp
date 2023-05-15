@@ -12,7 +12,7 @@
 <jsp:include page="/WEB-INF/partials/navbar.jsp" />
 
 <form action="${pageContext.request.contextPath}/ads/search" method="get" class="form-inline my-2 my-lg-0">
-    <input class="form-control mr-sm-2" type="search" name="q" placeholder="Search Ads" aria-label="Search">
+    <input class="form-control mr-sm-2" type="search" name="q" placeholder="Search ads" aria-label="Search">
     <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
 </form>
 

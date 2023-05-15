@@ -51,12 +51,25 @@ public class MySQLUsersDao extends BaseDao implements Users {
             throw new RuntimeException("Error updating user.", e);
         }
     }
+    @Override
+    public User findByUserId(long id) {
+        try {
+            String query = "SELECT * FROM users WHERE id = ?";
+            PreparedStatement stmt = connection.prepareStatement(query);
+            stmt.setLong(1, id);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return extractUser(rs);
+            } else {
+                return null;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error finding user by id.", e);
+        }
+    }
 
 
     private User extractUser(ResultSet rs) throws SQLException {
-        if (! rs.next()) {
-            return null;
-        }
         return new User(
             rs.getLong("id"),
             rs.getString("username"),
@@ -64,5 +77,4 @@ public class MySQLUsersDao extends BaseDao implements Users {
             rs.getString("password")
         );
     }
-
 }

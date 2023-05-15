@@ -19,4 +19,5 @@ public interface Ads {
     void update(Ad ad);
     void delete(long id);
     List<Ad> getByCategory(Category category);
+    List<Ad> searchByCategory(String categoryName);
 }

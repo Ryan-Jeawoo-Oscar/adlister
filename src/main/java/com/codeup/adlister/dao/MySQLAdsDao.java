@@ -1,6 +1,7 @@
 package com.codeup.adlister.dao;
 
 import com.codeup.adlister.models.Ad;
+import com.codeup.adlister.models.User;
 import com.codeup.adlister.models.Category;
 import com.mysql.cj.jdbc.Driver;
 
@@ -111,16 +112,21 @@ public class MySQLAdsDao extends BaseDao implements Ads {
     @Override
     public List<Ad> search(String searchQuery) {
         try {
-            PreparedStatement stmt = connection.prepareStatement("SELECT * FROM ads WHERE title LIKE ? OR description LIKE ?");
-            String likeQuery = "%" + searchQuery + "%";
-            stmt.setString(1, likeQuery);
-            stmt.setString(2, likeQuery);
+            String query = "SELECT DISTINCT a.* FROM ads a " +
+                    "JOIN ad_categories ac ON a.id = ac.ad_id " +
+                    "JOIN categories c ON ac.category_id = c.id " +
+                    "WHERE a.title LIKE ? OR a.description LIKE ? OR c.name LIKE ?";
+            PreparedStatement stmt = connection.prepareStatement(query);
+            stmt.setString(1, "%" + searchQuery + "%");
+            stmt.setString(2, "%" + searchQuery + "%");
+            stmt.setString(3, "%" + searchQuery + "%");
             ResultSet rs = stmt.executeQuery();
             return createAdsFromResults(rs);
         } catch (SQLException e) {
-            throw new RuntimeException("Error searching for ads.", e);
+            throw new RuntimeException("Error searching ads by title, description, or category.", e);
         }
     }
+
     @Override
     public List<Ad> getUserAds(long userId) {
         PreparedStatement stmt = null;
@@ -171,6 +177,21 @@ public class MySQLAdsDao extends BaseDao implements Ads {
             return createAdsFromResults(rs);
         } catch (SQLException e) {
             throw new RuntimeException("Error retrieving ads by category", e);
+        }
+    }
+    @Override
+    public List<Ad> searchByCategory(String categoryName) {
+        try {
+            String query = "SELECT a.* FROM ads a " +
+                    "JOIN ad_categories ac ON a.id = ac.ad_id " +
+                    "JOIN categories c ON ac.category_id = c.id " +
+                    "WHERE c.name LIKE ?";
+            PreparedStatement stmt = connection.prepareStatement(query);
+            stmt.setString(1, "%" + categoryName + "%");
+            ResultSet rs = stmt.executeQuery();
+            return createAdsFromResults(rs);
+        } catch (SQLException e) {
+            throw new RuntimeException("Error searching ads by category.", e);
         }
     }
 }
