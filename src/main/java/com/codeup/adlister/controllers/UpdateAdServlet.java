@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Arrays;
 import java.util.Set;
 
 @WebServlet(name = "controllers.UpdateAdServlet", urlPatterns = "/ads/update")
@@ -28,7 +29,7 @@ public class UpdateAdServlet extends HttpServlet {
         String description = request.getParameter("description");
         long userId = ((User) request.getSession().getAttribute("user")).getId();
         String[] selectedCategories = request.getParameterValues("categories");
-        Set<Category> updatedCategories = new HashSet<>();
+        Set<Category> finalCategories = new HashSet<>();
 
         // Fetch the current ad's categories
         Ad currentAd = DaoFactory.getAdsDao().findById(id);
@@ -39,26 +40,25 @@ public class UpdateAdServlet extends HttpServlet {
             for (String categoryId : selectedCategories) {
                 Category category = categoriesDao.findById(Long.parseLong(categoryId));
                 if (category != null) {
-                    // Check if the category is already in the ad's categories
-                    if (currentCategories.contains(category)) {
-                        // If it's already in the list, remove it from the current categories
-                        currentCategories.remove(category);
+                    // If the category id is already in the current categories, remove it
+                    if (currentCategories.stream().anyMatch(currentCategory -> currentCategory.getId() == category.getId())) {
+                        currentCategories.removeIf(currentCategory -> currentCategory.getId() == category.getId());
                     } else {
-                        // If it's not in the list, add it to the updated categories
-                        updatedCategories.add(category);
+                        // If the category id is not in the current categories, add it
+                        finalCategories.add(category);
                     }
                 }
             }
         }
 
-        // Merge the current categories (with the removed ones) and updated categories
-        currentCategories.addAll(updatedCategories);
+        // Add the remaining current categories to the final categories
+        finalCategories.addAll(currentCategories);
 
-        Ad updatedAd = new Ad(id, userId, title, description, currentCategories);
+        Ad updatedAd = new Ad(id, userId, title, description, new ArrayList<>(finalCategories));
         DaoFactory.getAdsDao().update(updatedAd);
 
         if (selectedCategories != null) {
-            DaoFactory.getCategoriesDao().updateCategoriesForAd(id, currentCategories);
+            DaoFactory.getCategoriesDao().updateCategoriesForAd(id, new ArrayList<>(finalCategories));
         }
 
         response.sendRedirect(request.getContextPath() + "/profile");

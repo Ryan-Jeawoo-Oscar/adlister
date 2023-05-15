@@ -149,6 +149,32 @@ public class MySQLAdsDao extends BaseDao implements Ads {
             stmt.setString(3, ad.getDescription());
             stmt.setLong(4, ad.getId());
             stmt.executeUpdate();
+
+            List<Category> currentCategories = getCategoriesForAd(ad.getId());
+            List<Category> newCategories = new ArrayList<>(ad.getCategories());
+
+            // Add new categories
+            for (Category newCategory : newCategories) {
+                if (currentCategories.stream().noneMatch(currentCategory -> currentCategory.getId() == newCategory.getId())) {
+                    String associateCategoryQuery = "INSERT INTO ad_categories(ad_id, category_id) VALUES (?, ?)";
+                    PreparedStatement associateStmt = connection.prepareStatement(associateCategoryQuery);
+                    associateStmt.setLong(1, ad.getId());
+                    associateStmt.setLong(2, newCategory.getId());
+                    associateStmt.executeUpdate();
+                }
+            }
+
+            // Remove categories that are not in the new categories list
+            for (Category currentCategory : currentCategories) {
+                if (newCategories.stream().noneMatch(newCategory -> newCategory.getId() == currentCategory.getId())) {
+                    String deleteCategoryQuery = "DELETE FROM ad_categories WHERE ad_id=? AND category_id=?";
+                    PreparedStatement deleteStmt = connection.prepareStatement(deleteCategoryQuery);
+                    deleteStmt.setLong(1, ad.getId());
+                    deleteStmt.setLong(2, currentCategory.getId());
+                    deleteStmt.executeUpdate();
+                }
+            }
+
         } catch (SQLException e) {
             throw new RuntimeException("Error updating the ad.", e);
         }
