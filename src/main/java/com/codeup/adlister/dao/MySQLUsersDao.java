@@ -16,11 +16,17 @@ public class MySQLUsersDao extends BaseDao implements Users {
         try {
             PreparedStatement stmt = connection.prepareStatement(query);
             stmt.setString(1, username);
-            return extractUser(stmt.executeQuery());
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return extractUser(rs);
+            } else {
+                return null;
+            }
         } catch (SQLException e) {
             throw new RuntimeException("Error finding a user by username", e);
         }
     }
+
 
     @Override
     public Long insert(User user) {
