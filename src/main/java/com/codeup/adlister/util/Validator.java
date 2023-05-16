@@ -6,7 +6,7 @@ public class Validator {
     private static final String USERNAME_PATTERN = "^[a-zA-Z0-9]{2,15}$";
     private static final String EMAIL_PATTERN = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
     private static final String PASSWORD_PATTERN = "^[a-zA-Z0-9]{4,10}$";
-    private static final String TITLE_PATTERN = "^[a-zA-Z0-9 ]{2,30}$";
+    private static final String TITLE_PATTERN = "^[a-zA-Z0-9 &%]{2,30}$";
     private static final String DESCRIPTION_PATTERN = "^[a-zA-Z0-9 .,!?'-]{5,500}$";
 
     private static final Pattern USERNAME_REGEX = Pattern.compile(USERNAME_PATTERN);

@@ -33,9 +33,8 @@
             <p>${ad.description}</p>
             <p>Categories: <c:forEach var="category" items="${ad.categories}">${category.name}<c:if test="${!categoryStatus.last}">, </c:if></c:forEach></p>
             <br>
-
-            <button class="update-btn">Update</button>
-            <form class="update-form" action="/ads/update" method="POST" style="display: none">
+            <button class="update-btn" style="width: 80px; height: 35px;">Update</button>
+            <form class="update-form" action="/ads/update" method="POST" style="display: none;">
                 <input type="hidden" name="id" value="${ad.id}" />
                 <label for="title">Title:</label>
                 <input type="text" id="title" name="title" value="${ad.title}" />
@@ -50,13 +49,14 @@
                     </c:forEach>
                 </select>
                 <br/>
-                <input type="submit" value="Confirm" />
+                <input type="submit" class="btn btn-primary confirm-btn" value="Confirm" />
             </form>
-
-            <form action="/ads/delete" method="POST">
-                <input type="hidden" name="id" value="${ad.id}" />
-                <input type="submit" value="Delete Ad" />
-            </form>
+            <div style="display: inline;">
+                <form action="/ads/delete" method="POST" style="display: inline;">
+                    <input type="hidden" name="id" value="${ad.id}" />
+                    <input type="submit" class="btn btn-danger delete-btn" value="Delete Ad" style="width: 80px; height: 35px;"  />
+                </form>
+            </div>
         </div>
     </c:forEach>
 </div>
